@@ -15,7 +15,7 @@ class VaultLocalDataSource {
 
     final payload = json.encode({
       'key': key,
-      'iv': encrypted['iv'], // ✅ nuevo
+      'iv': encrypted['iv'], 
       'cipher': encrypted['cipher'],
     });
 
