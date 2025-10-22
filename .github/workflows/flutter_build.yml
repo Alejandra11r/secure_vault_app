@@ -27,7 +27,7 @@ jobs:
         run: flutter test
       
       - name: Run Integration Tests
-        run: flutter test integration_test
+        run: flutter test integration_test -d linux
 
       - name: Build Release APK
         run: flutter build apk --release
