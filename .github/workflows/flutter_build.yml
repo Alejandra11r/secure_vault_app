@@ -29,6 +29,9 @@ jobs:
       - name: Run Flutter Tests
         run: flutter test --coverage
 
+      - name: Check coverage file
+        run: ls -la coverage/
+      
       - name: Run dart_code_metrics
         run: dart run dart_code_metrics:metrics analyze lib --fatal-style
           --fatal-performance --fatal-warnings
