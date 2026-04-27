@@ -19,7 +19,7 @@ class FirebaseMessagingService {
     await getToken();
 
     await FirebaseMessaging.instance.setAutoInitEnabled(true);
-    FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
       alert: true,
       sound: true,
       badge: true,

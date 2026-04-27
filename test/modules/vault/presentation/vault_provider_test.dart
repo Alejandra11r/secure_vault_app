@@ -16,9 +16,10 @@ void main() {
       final repo = VaultRepositoryImpl(dataSource);
 
       final provider = VaultProvider(
-          addNote: AddNoteUseCase(repo),
-          getNotesUseCase: GetNotesUseCase(repo),
-          deleteNote: DeleteNoteUseCase(repo));
+        addNote: AddNoteUseCase(repo),
+        getNotesUseCase: GetNotesUseCase(repo),
+        deleteNote: DeleteNoteUseCase(repo),
+      );
 
       await provider.addNew('nota de prueba');
       await provider.loadNotes();

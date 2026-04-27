@@ -15,7 +15,7 @@ class VaultLocalDataSource {
 
     final payload = json.encode({
       'key': key,
-      'iv': encrypted['iv'], 
+      'iv': encrypted['iv'],
       'cipher': encrypted['cipher'],
     });
 
@@ -26,21 +26,31 @@ class VaultLocalDataSource {
     final all = <Map<String, String>>[];
 
     for (int i = 0; i < 20; i++) {
-      final k = 'note_$i';
-      final v = await secureStorage.read(key: k);
-      if (v != null) {
-        try {
-          final obj = json.decode(v);
-          all.add({
-            'id': '$i',
-            'key': obj['key'],
-            'iv': obj['iv'],
-            'cipher': obj['cipher']
-          });
-        } catch (_) {}
-      }
+     final Map<String, String>? note = await getNoteFormat(index: i);
+     if(note != null){
+      all.add(note);
+     }
     }
     return all;
+  }
+
+  Future<Map<String, String>?> getNoteFormat({required int? index}) async {
+    final key = 'note_$index';
+    final String? note = await secureStorage.read(key: key);
+    if (note != null) {
+      try {
+        final Map<String, dynamic> obj = json.decode(note);
+        return {
+          'id': key,
+          'key': obj['key'],
+          'iv': obj['iv'],
+          'cipher': obj['cipher'],
+        };
+      } catch (_) {
+        return null;
+      }
+    }
+    return null;
   }
 
   Future<void> deleteNote(String id) async {

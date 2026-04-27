@@ -10,7 +10,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  FirebaseMessagingService.config();
+  await FirebaseMessagingService.config();
 
   await di.initDependencies();
   runApp(const App());

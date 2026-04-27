@@ -10,7 +10,7 @@ Future<void> main() {
     ..reporters = [
       ProgressReporter(),
       TestRunSummaryReporter(),
-      JsonReporter(path: './report.json'),
+      JsonReporter(),
     ]
     ..stepDefinitions = [
       step1(),

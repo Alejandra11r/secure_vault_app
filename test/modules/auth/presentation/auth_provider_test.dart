@@ -16,7 +16,7 @@ void main() {
 
       
       final provider = AuthProvider(
-          loginUseCase: LoginUseCase(repo), logoutUseCase: LogoutUseCase(repo));
+          loginUseCase: LoginUseCase(repo), logoutUseCase: LogoutUseCase(repo),);
 
       final ok = await provider.login('a@b.com', 'pwd');
       expect(ok, true);
@@ -29,7 +29,7 @@ void main() {
       final local = AuthLocalDataSource(storage);
       final repo = AuthRepositoryImpl(local);
       final provider = AuthProvider(
-          loginUseCase: LoginUseCase(repo), logoutUseCase: LogoutUseCase(repo));
+          loginUseCase: LoginUseCase(repo), logoutUseCase: LogoutUseCase(repo),);
 
       await provider.login('a@b.com', 'pwd');
       await provider.logout();

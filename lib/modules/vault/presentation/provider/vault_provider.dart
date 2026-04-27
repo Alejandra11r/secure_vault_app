@@ -12,10 +12,11 @@ class VaultProvider extends ChangeNotifier {
 
   List<Map<String, String>> notes = [];
 
-  VaultProvider(
-      {required this.addNote,
-      required this.getNotesUseCase,
-      required this.deleteNote});
+  VaultProvider({
+    required this.addNote,
+    required this.getNotesUseCase,
+    required this.deleteNote,
+  });
 
   Future<void> loadNotes() async {
     notes = await getNotesUseCase();

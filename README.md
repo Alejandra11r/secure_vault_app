@@ -14,3 +14,20 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+
+Comands Analysis Code
+- flutter analyze
+- dart run dart_code_metrics:metrics analyze lib
+sonar-scanner \
+  -Dsonar.projectKey=secure_vault_app \
+  -Dsonar.sources=lib \
+  -Dsonar.host.url=http://localhost:9000 \
+  -Dsonar.token=sqp_7890727c9ca0bde167776989202ba6e38a606f8f
+
+
+
+
+
+
+

@@ -97,7 +97,7 @@ class FakeSecureStorage implements FlutterSecureStorage {
       LinuxOptions? lOptions,
       WebOptions? webOptions,
       MacOsOptions? mOptions,
-      WindowsOptions? wOptions}) async {
+      WindowsOptions? wOptions,}) async {
     return _storage.containsKey(key);
   }
 }

@@ -7,7 +7,9 @@ StepDefinitionGeneric step1() {
     'la app está abierta',
     (context) async {
       await FlutterDriverUtils.isPresent(
-          context.world.driver, find.byType('MaterialApp'));
+        context.world.driver,
+        find.byType('MaterialApp'),
+      );
     },
   );
 }
@@ -20,9 +22,15 @@ StepDefinitionGeneric step2() {
       final password = find.byValueKey("password_field");
       final btn = find.byValueKey("login_button");
       await FlutterDriverUtils.enterText(
-          context.world.driver, username, "alejandra@gmail.com");
+        context.world.driver,
+        username,
+        "alejandra@gmail.com",
+      );
       await FlutterDriverUtils.enterText(
-          context.world.driver, password, "123456789");
+        context.world.driver,
+        password,
+        "123456789",
+      );
       await FlutterDriverUtils.tap(context.world.driver, btn);
     },
   );
@@ -33,7 +41,10 @@ StepDefinitionGeneric step3() {
     'debo ver la caja fuerte',
     (context) async {
       await FlutterDriverUtils.isPresent(
-          context.world.driver, find.text("Mi Caja Fuerte"));
+          context.world.driver,
+          find.text(
+            "Mi Caja Fuerte",
+          ),);
     },
   );
 }
