@@ -25,7 +25,7 @@ sonar-scanner \
   -Dsonar.host.url=http://localhost:9000 \
   -Dsonar.token=sqp_7890727c9ca0bde167776989202ba6e38a606f8f
 
-Cloud e51c00de52dd2355ea56dce9daccccc73e20a495
+Cloud af22e5d79c777caaac49daa27290746533324642
 
 
 
