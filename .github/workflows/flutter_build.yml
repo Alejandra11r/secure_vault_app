@@ -8,7 +8,7 @@ on:
 
 permissions:
   contents: write
-  
+
 jobs:
   build:
     name: Build APK and Run Tests
@@ -27,8 +27,16 @@ jobs:
         run: flutter pub get
 
       - name: Run Flutter Tests
-        run: flutter test
-      
+        run: flutter test --coverage
+
+      - name: Run dart_code_metrics
+        run: dart run dart_code_metrics:metrics analyze lib --fatal-style
+          --fatal-performance --fatal-warnings
+
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Build Release APK
         run: flutter build apk --release
