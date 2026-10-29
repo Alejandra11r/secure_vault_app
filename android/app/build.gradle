@@ -33,11 +33,40 @@ android {
         versionName = flutter.versionName
     }
 
+    flavorDimensions += ["environment", "distribution"]
+
+    productFlavors {
+        development {
+            dimension "environment"
+            versionNameSuffix "-dev"
+            manifestPlaceholders = [appLabel: "Secure Vault Dev"]
+            buildConfigField "String", "APP_ENVIRONMENT", '"development"'
+        }
+        staging {
+            dimension "environment"
+            versionNameSuffix "-staging"
+            manifestPlaceholders = [appLabel: "Secure Vault Staging"]
+            buildConfigField "String", "APP_ENVIRONMENT", '"staging"'
+        }
+        production {
+            dimension "environment"
+            manifestPlaceholders = [appLabel: "Secure Vault"]
+            buildConfigField "String", "APP_ENVIRONMENT", '"production"'
+        }
+
+        internal {
+            dimension "distribution"
+            buildConfigField "String", "APP_DISTRIBUTION", '"internal"'
+        }
+        store {
+            dimension "distribution"
+            buildConfigField "String", "APP_DISTRIBUTION", '"store"'
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.debug
+            // Production signing must be configured before store distribution.
         }
     }
 }
