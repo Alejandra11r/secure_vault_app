@@ -1,10 +1,59 @@
 # Secure Vault App
 
-Aplicación Flutter de demostración para autenticación y almacenamiento de notas cifradas.
+Secure Vault es una aplicación Flutter **offline-first** para guardar notas, imágenes y documentos privados en el dispositivo. El contenido de la caja fuerte se cifra antes de persistirse. El acceso no depende de una cuenta en la nube ni de conexión a internet.
 
-## Desarrollo
+## Qué puedes hacer
 
-Requiere Flutter 3.35.6 o compatible con el SDK indicado en `pubspec.yaml`.
+- Crear una cuenta local con correo y contraseña, e iniciar sesión en este dispositivo. Los correos se normalizan para evitar cuentas duplicadas con diferencias de mayúsculas o espacios.
+- Crear, consultar, editar y eliminar notas; organizarlas mediante categorías.
+- Importar una foto desde la cámara o la galería, o seleccionar documentos compatibles.
+- Previsualizar imágenes y texto guardados. Al exportar un documento se crea una copia descifrada fuera de la caja fuerte; elimínala cuando termines.
+- Mantener los datos al cerrar sesión y volver a entrar con la misma cuenta local.
+- Eliminar explícitamente una cuenta local y sus datos actuales de Drift; la interfaz pide escribir `ELIMINAR` para confirmar.
+
+La navegación principal tiene las pestañas Inicio, Notas, Categorías, Archivos y Perfil. La ruta `/info` presenta información del producto y puede abrirse mediante notificaciones o el esquema `securevault://open/info`. Las rutas privadas siguen requiriendo una sesión desbloqueada.
+
+## Seguridad y almacenamiento
+
+- Las cuentas y el sobre cifrado de la clave se conservan con `flutter_secure_storage`.
+- Notas, categorías, metadatos y bytes de archivos se almacenan localmente con Drift/SQLite; el contenido se cifra con AES-256-GCM.
+- Cada cuenta usa una clave aleatoria de bóveda. La contraseña deriva una clave de envoltura con Argon2id y HKDF-SHA-256; el sobre autenticado permite comprobar la contraseña.
+- La app bloquea la sesión al volver del segundo plano. Cerrar sesión limpia las claves de sesión en memoria, pero conserva los datos guardados.
+- No hay biometría ni recuperación de contraseña. Si se olvida la contraseña, no se puede recuperar el acceso al contenido cifrado.
+- El borrado lógico no garantiza la eliminación física de copias retenidas por SQLite WAL, backups o memoria flash. Las notas heredadas del formato AES-CBC no se migran ni se borran automáticamente.
+
+El perfil criptográfico actual de Argon2id (32 MiB, dos iteraciones) es provisional: debe medirse en dispositivos Android e iOS reales antes de una publicación. La limpieza de buffers en memoria es de mejor esfuerzo y no equivale a borrado físico garantizado.
+
+### Archivos compatibles
+
+Se aceptan imágenes JPEG y PNG, documentos PDF y archivos TXT. El máximo es 50 MiB por archivo y 500 MiB por cuenta. Los tipos y firmas compatibles se validan antes de guardar.
+
+## Conectividad y notificaciones
+
+Firebase Messaging se conserva para permisos, tokens, recepción y navegación desde notificaciones. Es opcional para las funciones principales: sin Firebase o sin internet todavía se puede autenticar localmente y guardar o consultar el contenido de la caja fuerte. Las notificaciones sí requieren los servicios de Firebase y conectividad.
+
+La app no incluye Firebase Analytics, geolocalización, sincronización REST, Method Channels propios ni trabajo en segundo plano para la bóveda.
+
+## Tecnologías y estructura
+
+- **Flutter + Provider:** interfaz y estado de autenticación/bóveda.
+- **GetIt:** registro de dependencias.
+- **GoRouter:** navegación productiva y protección de rutas según la sesión.
+- **Drift/SQLite:** persistencia local relacional con aislamiento por cuenta.
+- **flutter_secure_storage + cryptography:** almacenamiento del sobre de clave y primitivas de cifrado.
+- **image_picker + file_picker:** cámara, galería y selector de documentos del sistema.
+- **Firebase Messaging:** notificaciones push opcionales.
+
+El código de producción está organizado por módulos de autenticación y bóveda, con capas de presentación, dominio y datos. Los ejercicios del assessment se mantienen fuera del flujo de producto:
+
+- `lib/labs/assessment/rest_lab_client.dart`: cliente REST de práctica, no requerido para abrir la caja fuerte.
+- `lib/core/workers/data_worker.dart`: ejercicio de isolates para CPU/JSON; no se deben enviar claves ni texto descifrado.
+- AutoRoute es una alternativa para comparar con GoRouter en un ejercicio separado; la aplicación usa GoRouter.
+- OWASP MASVS/MASTG, ASO y comparación de routers requieren evidencias y revisión específicas. Su presencia como temas del assessment no significa certificación, publicación ni integración de Analytics.
+
+## Requisitos y comandos
+
+Se recomienda Flutter 3.35.6 (Dart 3.9.x) y Java 17 para los builds Android.
 
 ```sh
 flutter pub get
@@ -12,51 +61,20 @@ flutter analyze
 flutter test
 ```
 
-## Ambientes y flavors Android
-
-Android separa dos dimensiones independientes: ambiente (`development`, `staging`, `production`) y distribución (`internal`, `store`). Las seis combinaciones actuales se validan en GitHub Actions y reciben valores `APP_ENV` y `APP_DISTRIBUTION` en Dart.
+Para ejecutar el flavor Android de desarrollo interno:
 
 ```sh
 flutter run --flavor developmentInternal \
   --dart-define=APP_ENV=development \
   --dart-define=APP_DISTRIBUTION=internal
-
-flutter build appbundle --release --flavor productionStore \
-  --dart-define=APP_ENV=production \
-  --dart-define=APP_DISTRIBUTION=store
 ```
 
-Por ahora todas las combinaciones conservan el mismo `applicationId` para coincidir con el único registro Firebase que existe en el repositorio. Antes de instalar ambientes lado a lado o distribuirlos, registrar cada aplicación Android con Firebase, guardar su configuración por source set/ambiente, y entonces asignar identificadores únicos. No se debe distribuir un flavor hasta configurar firma de producción y verificar Firebase, privacidad y políticas de tienda.
+Android define dos dimensiones de flavor: ambiente (`development`, `staging`, `production`) y distribución (`internal`, `store`). El workflow de GitHub Actions analiza y prueba el proyecto y construye APKs de verificación para sus seis combinaciones. Los flavors comparten por ahora el mismo `applicationId`; no deben instalarse lado a lado ni publicarse con esa configuración.
 
-iOS todavía usa el scheme `Runner` y no tiene schemes/configuraciones equivalentes. Para paridad multiplataforma hay que añadir schemes compartidos y configuraciones Xcode por las combinaciones que realmente se vayan a distribuir; generar y asociar los `GoogleService-Info.plist` correctos antes de hacerlo.
+iOS mantiene el scheme `Runner`; no hay una matriz de schemes equivalente a los flavors Android. Antes de distribuir cualquier plataforma deben completarse firma, configuración de Firebase por aplicación, revisión de privacidad/políticas de tienda y pruebas en dispositivos reales.
 
-`--dart-define` configura valores cliente; no es un almacén de secretos. No incluir claves privadas, contraseñas ni tokens de CI en el binario.
+`--dart-define` configura valores de cliente y no es un almacén de secretos. No incluyas claves privadas, contraseñas o tokens de CI en el binario ni en el repositorio.
 
-## Estado de revisión de objetivos
+## CI y manejo de secretos
 
-| Objetivo | Estado | Pendiente principal |
-| --- | --- | --- |
-| CI/CD, dispositivos y MobSF | Parcial | CI Android conserva workflows; faltan ejecución en dispositivos, MobSF y publicación aprobada. |
-| Arquitectura modular | Parcial | La app se organiza por módulos/capas; no se extraen paquetes internos sin APIs estables. |
-| GoRouter / AutoRoute | GoRouter en producción | Guards y deep links están integrados; AutoRoute queda como comparación aislada del assessment. |
-| UI responsive | Parcial | Bóveda usa layout adaptable teléfono/tablet; falta validar accesibilidad y tamaños en dispositivos. |
-| Persistencia y seguridad | Implementado en app | SQLite/Drift con payload cifrado y archivos privados; faltan pruebas de MASTG y revisión externa. |
-| REST, async e isolates | Laboratorios separados | Cliente REST y worker no son dependencias de apertura/uso offline de la bóveda. |
-| Permisos y APIs nativas | Implementado para medios | Cámara y selectores; no se usa ubicación, Method Channel ni background work. |
-| Push y deep links | Integrado y opcional | Firebase Messaging se inicializa en segundo plano de arranque; verificar en dispositivos y configurar dominios universal links antes de distribuir. |
-| MASVS/MASTG y ASO | Guía de assessment | Consultar `docs/assessment/README.md`; faltan evidencias de pruebas manuales y revisión actual de tiendas. |
-| Flavors y publicación | Parcial | Android conserva combinaciones; faltan paridad iOS, firma y configuraciones Firebase verificadas por distribución. |
-
-## Seguridad y CI
-
-El workflow de GitHub Actions ejecuta análisis, tests y builds de verificación sin publicar releases ni conceder permisos de escritura al job de CI. La publicación debe ser un workflow protegido separado, con aprobación, firma almacenada en secretos de CI y permisos mínimos. Integrar MobSF/device farm requiere definir servicio, credenciales y política de retención de artefactos.
-
-Un token de Sonar apareció previamente en la documentación del proyecto y se eliminó. Si era real, revocarlo/rotarlo y limpiar también el historial Git; eliminarlo del archivo no invalida exposiciones anteriores. Configurar `SONAR_TOKEN` únicamente como secreto del proveedor si se reactiva el análisis.
-
-## Decisiones para producción
-
-- No añadir permisos de hardware hasta que una función de producto los necesite; solicitar permisos en contexto y documentar su propósito.
-- Extraer paquetes cuando exista una API reutilizable y estable; no fragmentar la app solo para aumentar el número de módulos.
-- La aplicación principal funciona offline; Firebase Messaging y los laboratorios REST no son requisito para acceder a los datos.
-- No incorporar Firebase Analytics, geolocalización, Method Channels ni tareas de background.
-- Las notas anteriores al esquema Drift no se migran ni se borran automáticamente.
+El workflow ejecuta análisis, pruebas y builds de verificación; no publica releases. Si un token de Sonar que estuvo anteriormente en documentación era real, revócalo y rótalo, y revisa el historial Git: borrarlo del archivo no invalida una exposición previa. Si Sonar se usa en CI, guarda `SONAR_TOKEN` únicamente como secreto del proveedor.

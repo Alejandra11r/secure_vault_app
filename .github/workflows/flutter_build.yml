@@ -75,20 +75,24 @@ jobs:
         run: |
           flutter config --jdk-dir="$JAVA_HOME"
 
-      # 5. Verificar las versiones de Java y Gradle
+      # Accept licenses before Flutter resolves Android SDK packages.
+      - name: Accept Android SDK licenses
+        run: yes | flutter doctor --android-licenses
+
+      # 6. Verify the toolchain used by this Android job.
       - name: Verify Java and Gradle
         run: |
           echo "JAVA_HOME: $JAVA_HOME"
           java -version
-          flutter doctor -v
+          flutter --version
           cd android
           ./gradlew --version
 
-      # 6. Descargar dependencias
+      # 7. Descargar dependencias
       - name: Install dependencies
         run: flutter pub get
 
-      # 7. Compilar el flavor correspondiente
+      # 8. Compilar el flavor correspondiente
       - name: Build flavor smoke APK
         run: >-
           flutter build apk --debug
@@ -96,7 +100,7 @@ jobs:
           --dart-define=APP_ENV=${{ matrix.environment }}
           --dart-define=APP_DISTRIBUTION=${{ matrix.distribution }}
 
-      # 8. Guardar el APK generado
+      # 9. Guardar el APK generado
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:

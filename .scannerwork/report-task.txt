@@ -2,5 +2,5 @@ projectKey=secure_vault_app
 serverUrl=http://localhost:9000
 serverVersion=10.1.0.73491
 dashboardUrl=http://localhost:9000/dashboard?id=secure_vault_app
-ceTaskId=AZ_TCgpNlqfDT0xqDAPD
-ceTaskUrl=http://localhost:9000/api/ce/task?id=AZ_TCgpNlqfDT0xqDAPD
+ceTaskId=AaGLAacvx6QAKYQswGrZ
+ceTaskUrl=http://localhost:9000/api/ce/task?id=AaGLAacvx6QAKYQswGrZ
