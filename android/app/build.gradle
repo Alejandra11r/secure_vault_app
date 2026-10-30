@@ -33,6 +33,10 @@ android {
         versionName = flutter.versionName
     }
 
+    buildFeatures {
+        buildConfig true
+    }
+
     flavorDimensions += ["environment", "distribution"]
 
     productFlavors {

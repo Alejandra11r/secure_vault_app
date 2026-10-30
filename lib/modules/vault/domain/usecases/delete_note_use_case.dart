@@ -4,7 +4,7 @@ class DeleteNoteUseCase {
   final VaultRepository repository;
   DeleteNoteUseCase(this.repository);
 
-  Future<void> call(String id) async {
-    return await repository.deleteNote(id);
+  Future<void> call(String accountId, String id) async {
+    await repository.deleteNote(accountId, id);
   }
 }

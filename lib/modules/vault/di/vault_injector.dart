@@ -1,4 +1,5 @@
 import 'package:secure_vault_app/modules/vault/data/datasources/vault_local_data_source.dart';
+import 'package:secure_vault_app/modules/vault/data/database/vault_database.dart';
 import 'package:secure_vault_app/modules/vault/data/repositories/vault_repository_impl.dart';
 import 'package:secure_vault_app/modules/vault/domain/usecases/add_note_use_case.dart';
 import 'package:secure_vault_app/modules/vault/domain/usecases/delete_note_use_case.dart';
@@ -8,8 +9,11 @@ import 'package:secure_vault_app/modules/vault/presentation/provider/vault_provi
 import '../../../app/di/injector.dart';
 
 void initVaultModule() {
-  getIt.registerLazySingleton(() => VaultLocalDataSource(getIt()));
-  getIt.registerLazySingleton<VaultRepository>(() => VaultRepositoryImpl(getIt()));
+  getIt.registerLazySingleton(() => VaultDatabase());
+  getIt.registerLazySingleton(() => VaultLocalDataSource(getIt(), getIt()));
+  getIt.registerLazySingleton<VaultRepository>(
+    () => VaultRepositoryImpl(getIt()),
+  );
   getIt.registerLazySingleton(() => AddNoteUseCase(getIt()));
   getIt.registerLazySingleton(() => GetNotesUseCase(getIt()));
   getIt.registerLazySingleton(() => DeleteNoteUseCase(getIt()));
@@ -18,6 +22,7 @@ void initVaultModule() {
       addNote: getIt<AddNoteUseCase>(),
       getNotesUseCase: getIt<GetNotesUseCase>(),
       deleteNote: getIt<DeleteNoteUseCase>(),
+      repository: getIt<VaultRepository>(),
     ),
   );
 }

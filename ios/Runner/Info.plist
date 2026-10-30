@@ -45,5 +45,16 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Secure Vault necesita la cámara para guardar fotografías cifradas en tu bóveda.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Secure Vault necesita acceso a las imágenes que elijas para guardarlas cifradas.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array><string>securevault</string></array>
+		</dict>
+	</array>
 </dict>
 </plist>

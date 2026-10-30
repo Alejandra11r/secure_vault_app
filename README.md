@@ -36,17 +36,16 @@ iOS todavía usa el scheme `Runner` y no tiene schemes/configuraciones equivalen
 
 | Objetivo | Estado | Pendiente principal |
 | --- | --- | --- |
-| CI/CD, tiendas, granjas de dispositivos y MobSF | Parcial | CI analiza, prueba y compila combinaciones Android; faltan integración en dispositivo, MobSF y publicación aprobada. |
-| Arquitectura modular y paquetes publicables | Parcial | Hay módulos por feature/capa; aún no hay paquetes internos extraídos/publicados. |
-| GoRouter/AutoRoute | Cumple parcialmente | GoRouter está integrado; faltan guardas de sesión y pruebas de enlaces externos. |
-| UI responsive/adaptativa | Parcial | Login desplazable y contenido acotado; faltan layouts adaptativos y pruebas de tamaños/accesibilidad. |
-| Persistencia local segura | Parcial | Usa secure storage; revisar diseño criptográfico, gestión de claves y modelo de datos antes de producción. |
-| REST y trabajo paralelo | Parcial | Existe un isolate de demostración; no hay cliente REST. Isolates deben reservarse para trabajo CPU-bound medido. |
-| Permisos y políticas de tiendas | Parcial | Se solicita permiso de notificaciones; faltan checklist de privacidad y revisión de políticas para publicación. |
-| Hardware y APIs nativas | No implementado | No hay un caso de producto definido para cámara/ubicación/canales nativos. |
-| Universal/App Links y push | Parcial | FCM recibe mensajes; falta configuración verificada de dominios y cobertura completa de arranque en frío. |
-| Analítica | No implementado | Definir necesidad, consentimiento y eventos antes de añadir SDK o recopilar datos. |
-| Flavors multidimensionales | Parcial | Android tiene dimensiones ambiente/distribución y CI construye las combinaciones; falta paridad iOS, proyectos Firebase y firma de tienda. |
+| CI/CD, dispositivos y MobSF | Parcial | CI Android conserva workflows; faltan ejecución en dispositivos, MobSF y publicación aprobada. |
+| Arquitectura modular | Parcial | La app se organiza por módulos/capas; no se extraen paquetes internos sin APIs estables. |
+| GoRouter / AutoRoute | GoRouter en producción | Guards y deep links están integrados; AutoRoute queda como comparación aislada del assessment. |
+| UI responsive | Parcial | Bóveda usa layout adaptable teléfono/tablet; falta validar accesibilidad y tamaños en dispositivos. |
+| Persistencia y seguridad | Implementado en app | SQLite/Drift con payload cifrado y archivos privados; faltan pruebas de MASTG y revisión externa. |
+| REST, async e isolates | Laboratorios separados | Cliente REST y worker no son dependencias de apertura/uso offline de la bóveda. |
+| Permisos y APIs nativas | Implementado para medios | Cámara y selectores; no se usa ubicación, Method Channel ni background work. |
+| Push y deep links | Integrado y opcional | Firebase Messaging se inicializa en segundo plano de arranque; verificar en dispositivos y configurar dominios universal links antes de distribuir. |
+| MASVS/MASTG y ASO | Guía de assessment | Consultar `docs/assessment/README.md`; faltan evidencias de pruebas manuales y revisión actual de tiendas. |
+| Flavors y publicación | Parcial | Android conserva combinaciones; faltan paridad iOS, firma y configuraciones Firebase verificadas por distribución. |
 
 ## Seguridad y CI
 
@@ -58,4 +57,6 @@ Un token de Sonar apareció previamente en la documentación del proyecto y se e
 
 - No añadir permisos de hardware hasta que una función de producto los necesite; solicitar permisos en contexto y documentar su propósito.
 - Extraer paquetes cuando exista una API reutilizable y estable; no fragmentar la app solo para aumentar el número de módulos.
-- Añadir analítica, base de datos local o servicios REST tras acordar requisitos de privacidad, volumen y ciclo de vida de datos.
+- La aplicación principal funciona offline; Firebase Messaging y los laboratorios REST no son requisito para acceder a los datos.
+- No incorporar Firebase Analytics, geolocalización, Method Channels ni tareas de background.
+- Las notas anteriores al esquema Drift no se migran ni se borran automáticamente.

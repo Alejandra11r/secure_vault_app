@@ -18,23 +18,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: "17"
-
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: "3.35.6"
           channel: stable
           cache: true
-      
-      - name: Force Flutter to use Java 17
-        run: |
-          flutter config --jdk-dir="$JAVA_HOME"
-          flutter doctor -v
 
       - name: Install dependencies
         run: flutter pub get
@@ -42,7 +31,7 @@ jobs:
       - name: Analyze
         run: flutter analyze
 
-      - name: Run unit and widget tests
+      - name: Run tests
         run: flutter test --coverage
 
       - name: Upload coverage
@@ -52,18 +41,28 @@ jobs:
           path: coverage/lcov.info
 
   android-flavors:
-    needs: quality
     name: Build ${{ matrix.environment }} / ${{ matrix.distribution }}
     runs-on: ubuntu-latest
+
     strategy:
       fail-fast: false
       matrix:
         environment: [development, staging, production]
         distribution: [internal, store]
+
     steps:
+      # 1. Descargar el repositorio
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2. Instalar Java 17
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      # 3. Configurar Flutter
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -71,9 +70,25 @@ jobs:
           channel: stable
           cache: true
 
+      # 4. Indicarle a Flutter que utilice Java 17
+      - name: Force Flutter to use Java 17
+        run: |
+          flutter config --jdk-dir="$JAVA_HOME"
+
+      # 5. Verificar las versiones de Java y Gradle
+      - name: Verify Java and Gradle
+        run: |
+          echo "JAVA_HOME: $JAVA_HOME"
+          java -version
+          flutter doctor -v
+          cd android
+          ./gradlew --version
+
+      # 6. Descargar dependencias
       - name: Install dependencies
         run: flutter pub get
 
+      # 7. Compilar el flavor correspondiente
       - name: Build flavor smoke APK
         run: >-
           flutter build apk --debug
@@ -81,7 +96,8 @@ jobs:
           --dart-define=APP_ENV=${{ matrix.environment }}
           --dart-define=APP_DISTRIBUTION=${{ matrix.distribution }}
 
-      - name: Upload flavor APK
+      # 8. Guardar el APK generado
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: android-${{ matrix.environment }}-${{ matrix.distribution }}

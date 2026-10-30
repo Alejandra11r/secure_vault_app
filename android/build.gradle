@@ -9,6 +9,16 @@ rootProject.buildDir = "../build"
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
+// Older FlutterFire plugins pin compileSdk to 33 while their resolved AndroidX
+// artifacts require API 34+. Keep their source versions and compile every
+// Android library against the app's API level.
+subprojects { project ->
+    project.afterEvaluate {
+        if (project.plugins.hasPlugin("com.android.library")) {
+            project.android.compileSdkVersion(36)
+        }
+    }
+}
 subprojects {
     project.evaluationDependsOn(":app")
 }

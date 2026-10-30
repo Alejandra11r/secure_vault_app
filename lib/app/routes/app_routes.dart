@@ -1,32 +1,62 @@
-import 'dart:convert';
-
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:secure_vault_app/modules/auth/presentation/pages/login_page.dart';
-import 'package:secure_vault_app/modules/vault/presentation/pages/vault_page.dart';
 
-final goRouter = GoRouter(
-  initialLocation: '/login',
-  routes: [
-    GoRoute(
-      path: '/login',
-      name: 'login',
-      builder: (context, state) {
-        final dataParam = state.uri.queryParameters['data'];
-        final decodedMap = dataParam != null
-            ? jsonDecode(Uri.decodeComponent(dataParam)) as Map<String, dynamic>
-            : null;
-        return LoginPage(
-          data: decodedMap,
-        );
+import '../pages/info_page.dart';
+import '../../modules/auth/presentation/pages/login_page.dart';
+import '../../modules/auth/presentation/provider/auth_provider.dart';
+import '../../modules/vault/presentation/pages/vault_page.dart';
+
+GoRouter createAppRouter(AuthProvider auth) => GoRouter(
+      initialLocation: '/login',
+      refreshListenable: auth,
+      redirect: (context, state) {
+        final location = state.matchedLocation;
+        final isAuthPage = location == '/login' || location == '/register';
+        if (auth.status == AuthStatus.initializing) return '/loading';
+        if (auth.isUnlocked) return isAuthPage ? '/vault' : null;
+        if (location == '/vault') {
+          return auth.status == AuthStatus.setupRequired
+              ? '/register'
+              : '/login';
+        }
+        if (auth.status == AuthStatus.setupRequired && location == '/login') {
+          return '/register';
+        }
+        if (location == '/loading') {
+          return auth.status == AuthStatus.setupRequired
+              ? '/register'
+              : '/login';
+        }
+        return null;
       },
-    ),
-    GoRoute(
-      path: '/vault',
-      name: 'vault',
-      builder: (context, state) {
-        final String? user = state.extra as String?;
-        return VaultPage(user: user ?? 'Sin usuario');
-      },
-    ),
-  ],
-);
+      routes: [
+        GoRoute(
+          path: '/loading',
+          builder: (context, state) => const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          ),
+        ),
+        GoRoute(
+          path: '/info',
+          name: 'info',
+          builder: (context, state) => const InfoPage(),
+        ),
+        GoRoute(
+          path: '/login',
+          name: 'login',
+          builder: (context, state) => const LoginPage(),
+        ),
+        GoRoute(
+          path: '/register',
+          name: 'register',
+          builder: (context, state) => const LoginPage(registration: true),
+        ),
+        GoRoute(
+          path: '/vault',
+          name: 'vault',
+          builder: (context, state) => VaultPage(
+            user: auth.user?.email ?? 'Sin usuario',
+          ),
+        ),
+      ],
+    );
