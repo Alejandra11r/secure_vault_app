@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/theme/vault_theme.dart';
-import '../../../../app/widgets/vault_ui.dart';
+import '../../../../app/widgets/vault_brand_mark.dart';
+import '../../../../app/widgets/vault_panel.dart';
+import '../../../../app/widgets/vault_section_heading.dart';
 import '../provider/vault_provider.dart';
 import 'list_notes_widget.dart';
 

@@ -7,7 +7,6 @@ class UserEntity {
   final String email;
 }
 
-/// An authenticated in-memory session. Never serialize this object.
 class AuthSession {
   const AuthSession({required this.user, required this.vaultKey});
 

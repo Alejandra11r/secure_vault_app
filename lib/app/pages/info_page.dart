@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../theme/vault_theme.dart';
-import '../widgets/vault_ui.dart';
+import '../widgets/vault_brand_mark.dart';
+import '../widgets/vault_panel.dart';
 
 class InfoPage extends StatelessWidget {
   const InfoPage({super.key});

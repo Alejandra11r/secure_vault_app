@@ -3,19 +3,13 @@ import 'dart:math';
 
 import 'package:cryptography/cryptography.dart';
 
-/// Versioned password-derived key wrapping for a per-user random vault key.
-///
-/// The implementation deliberately keeps the Argon2 parameters in the record
-/// and authenticates them as AES-GCM associated data. Parameter bounds are
-/// checked before invoking the memory-hard KDF.
 class EncryptionService {
   static const int formatVersion = 1;
   static const int saltLength = 16;
   static const int vaultKeyLength = 32;
   static const int nonceLength = 12;
 
-  // Provisional profile: 32 MiB, two passes and one lane. Device benchmarks
-  // are required before release; records keep these values for future tuning.
+  
   static const int memoryKiB = 32 * 1024;
   static const int iterations = 2;
   static const int parallelism = 1;
@@ -292,7 +286,7 @@ class WrappedVaultKey {
   final List<int> cipherText;
   final List<int> mac;
 
-  /// Returned only during registration and held by the in-memory session.
+  /// Se entrega al registrar y se conserva solo durante la sesión.
   final List<int> vaultKey;
 
   Map<String, Object> toJson() => {

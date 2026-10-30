@@ -9,7 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../../app/theme/vault_theme.dart';
 import '../provider/vault_provider.dart';
 
-/// Owns the platform picker, preview, import, export and plaintext cleanup flow.
+/// Gestiona selectores, vistas previas e importación/exportación de archivos.
 class VaultFileActions {
   VaultFileActions(this.context);
 
@@ -69,7 +69,7 @@ class VaultFileActions {
       try {
         await File(picked.path).delete();
       } catch (_) {
-        // The picker may not provide a filesystem-backed temporary file.
+        // El selector puede no crear un archivo temporal accesible.
       }
       _message('El archivo supera el límite de 50 MiB.');
       return;
@@ -80,7 +80,7 @@ class VaultFileActions {
       try {
         await File(picked.path).delete();
       } catch (_) {
-        // The picker may not provide a filesystem-backed temporary file.
+        // El selector puede no crear un archivo temporal accesible.
       }
       _message('La imagen debe ser JPEG o PNG.');
       return;
@@ -138,7 +138,7 @@ class VaultFileActions {
       try {
         await File(picked.path).delete();
       } catch (_) {
-        // Some picker implementations don't expose the temporary file.
+        // Algunos selectores no exponen el archivo temporal.
       }
     }
   }
@@ -177,8 +177,7 @@ class VaultFileActions {
       } catch (_) {}
       return;
     }
-    // FilePicker may own its returned buffer. Work on a writable copy so the
-    // secure memory cleanup cannot throw after a successful database write.
+    // Copiar el buffer del selector permite limpiarlo sin modificar su origen.
     final bytes = Uint8List.fromList(selectedBytes);
     try {
       final ext = (picked.extension ?? '').toLowerCase();
@@ -201,7 +200,7 @@ class VaultFileActions {
       try {
         await FilePicker.platform.clearTemporaryFiles();
       } catch (_) {
-        // A platform picker can own the temp-file lifecycle itself.
+        // El selector del sistema puede gestionar sus propios temporales.
       }
     }
   }
@@ -223,7 +222,7 @@ class VaultFileActions {
       try {
         bytes.fillRange(0, bytes.length, 0);
       } catch (_) {
-        // Avoid reporting failure after data has already been persisted.
+        // No informar fallo si los datos ya se guardaron.
       }
     }
   }

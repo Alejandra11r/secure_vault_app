@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:integration_test/integration_test.dart';
 import 'package:secure_vault_app/main.dart' as app;
 import 'package:uuid/uuid.dart';
 
 void main() {
-  group('Flujo de Login', () {
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
+  group('Flujo de inicio de sesión', () {
     testWidgets('Registra una cuenta local y guarda una nota cifrada',
         (tester) async {
       await app.main();
@@ -32,9 +35,16 @@ void main() {
 
       final vaultField = find.byKey(const Key('vault_field'));
       final saveButton = find.byKey(const Key('save_button'));
-      await tester.enterText(vaultField, 'Agregando nota 1');
+      const noteContent = 'Nota creada en la prueba de integración';
+      await tester.enterText(vaultField, noteContent);
       await tester.tap(saveButton);
       await tester.pumpAndSettle();
+
+      final notesTab = find.bySemanticsIdentifier('vault_notes_tab');
+      expect(notesTab, findsOneWidget);
+      await tester.tap(notesTab);
+      await tester.pumpAndSettle();
+      expect(find.text(noteContent), findsOneWidget);
     });
   });
 }

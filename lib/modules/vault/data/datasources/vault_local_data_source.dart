@@ -5,8 +5,8 @@ import 'package:drift/drift.dart' as d;
 import 'package:secure_vault_app/core/security/encryption_service.dart';
 import 'package:secure_vault_app/modules/vault/data/database/vault_database.dart';
 
-/// SQLite stores opaque identifiers and authenticated ciphertext only. The
-/// old secure-storage note keys are deliberately left untouched.
+/// SQLite guarda identificadores y texto cifrado autenticado.
+/// Las claves de notas heredadas se conservan.
 class VaultLocalDataSource {
   VaultLocalDataSource(this.database, this.encryptionService);
 

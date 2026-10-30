@@ -2,8 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:isolate';
 
-/// Assessment-only CPU worker. Never send vault keys or decrypted vault data
-/// through this isolate's message ports.
+/// Worker didáctico. No enviar claves ni contenido descifrado de la bóveda.
 class DataWorker {
   final ReceivePort _readyPort = ReceivePort();
   Isolate? _isolate;

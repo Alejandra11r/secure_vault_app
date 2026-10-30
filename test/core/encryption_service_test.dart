@@ -5,14 +5,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:secure_vault_app/core/security/encryption_service.dart';
 
 void main() {
-  group('EncryptionService', () {
+  group('Servicio de cifrado', () {
     late EncryptionService service;
 
     setUp(() {
       service = EncryptionService(argonMemoryKiB: 19 * 1024);
     });
 
-    test('wraps and unwraps a random vault key', () async {
+    test('envuelve y recupera una clave aleatoria de bóveda', () async {
       final wrapped = await service.createWrappedVaultKey(
         accountId: 'account-1',
         normalizedEmail: 'a@example.com',
@@ -30,7 +30,7 @@ void main() {
       expect(wrapped.toJson().containsKey('vaultKey'), isFalse);
     });
 
-    test('rejects a wrong password and modified KDF parameters', () async {
+    test('rechaza una contraseña incorrecta y parámetros KDF alterados', () async {
       final wrapped = await service.createWrappedVaultKey(
         accountId: 'account-1',
         normalizedEmail: 'a@example.com',
@@ -70,7 +70,7 @@ void main() {
       );
     });
 
-    test('rejects tampered content and associated data', () async {
+    test('detecta contenido y datos asociados alterados', () async {
       final key = List<int>.generate(32, (index) => index);
       final encrypted = await service.encryptContent(
         plainText: 'nota privada',
@@ -111,7 +111,7 @@ void main() {
       );
     });
 
-    test('rejects unsupported KDF profiles before derivation', () async {
+    test('rechaza perfiles KDF no admitidos antes de derivar', () async {
       final metadata = VaultKeyMetadata(
         accountId: 'account-1',
         normalizedEmail: 'a@example.com',

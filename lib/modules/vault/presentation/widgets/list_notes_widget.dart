@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:secure_vault_app/modules/vault/presentation/provider/vault_provider.dart';
 
 import '../../../../app/theme/vault_theme.dart';
-import '../../../../app/widgets/vault_ui.dart';
+import '../../../../app/widgets/vault_panel.dart';
 
 class ListNotesWidget extends StatelessWidget {
   const ListNotesWidget({
@@ -26,14 +26,19 @@ class ListNotesWidget extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.sticky_note_2_outlined,
-                      color: VaultColors.muted, size: 34,),
+                  const Icon(
+                    Icons.sticky_note_2_outlined,
+                    color: VaultColors.muted,
+                    size: 34,
+                  ),
                   const SizedBox(height: 8),
-                  Text('Tus notas aparecerán aquí',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(color: VaultColors.muted),),
+                  Text(
+                    'Tus notas aparecerán aquí',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(color: VaultColors.muted),
+                  ),
                 ],
               ),
             )
@@ -114,29 +119,38 @@ class _NoteTileState extends State<_NoteTile> {
     if (!mounted) return;
     var editedValue = value;
     final result = await showDialog<String>(
-        context: context,
-        builder: (dialogContext) => AlertDialog(
-              title: const Text('Editar nota'),
-              content: TextFormField(
-                  initialValue: value,
-                  autofocus: true,
-                  minLines: 3,
-                  maxLines: 10,
-                  onChanged: (text) => editedValue = text,
-                  decoration: const InputDecoration(labelText: 'Contenido'),),
-              actions: [
-                TextButton(
-                    onPressed: () => Navigator.pop(dialogContext),
-                    child: const Text('Cancelar'),),
-                FilledButton(
-                    onPressed: () => Navigator.pop(dialogContext, editedValue),
-                    child: const Text('Guardar'),),
-              ],
-            ),);
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Editar nota'),
+        content: TextFormField(
+          initialValue: value,
+          autofocus: true,
+          minLines: 3,
+          maxLines: 10,
+          onChanged: (text) => editedValue = text,
+          decoration: const InputDecoration(labelText: 'Contenido'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, editedValue),
+            child: const Text('Guardar'),
+          ),
+        ],
+      ),
+    );
     if (!mounted) return;
     if (result != null && result.trim().isNotEmpty) {
-      await widget.vault.editNote(widget.accountId, widget.vaultKey, id, result,
-          categoryId: categoryId,);
+      await widget.vault.editNote(
+        widget.accountId,
+        widget.vaultKey,
+        id,
+        result,
+        categoryId: categoryId,
+      );
     }
   }
 
@@ -152,19 +166,24 @@ class _NoteTileState extends State<_NoteTile> {
             const CircleAvatar(
               radius: 19,
               backgroundColor: Color(0x263E7BFA),
-              child: Icon(Icons.sticky_note_2_outlined,
-                  color: VaultColors.blue, size: 19,),
+              child: Icon(
+                Icons.sticky_note_2_outlined,
+                color: VaultColors.blue,
+                size: 19,
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Nota ${id.substring(0, id.length < 8 ? id.length : 8)}',
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleSmall
-                          ?.copyWith(fontWeight: FontWeight.w700),),
+                  Text(
+                    'Nota ${id.substring(0, id.length < 8 ? id.length : 8)}',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleSmall
+                        ?.copyWith(fontWeight: FontWeight.w700),
+                  ),
                   const SizedBox(height: 3),
                   FutureBuilder<String>(
                     future: _content,
@@ -188,17 +207,19 @@ class _NoteTileState extends State<_NoteTile> {
               ),
             ),
             IconButton(
-                tooltip: 'Editar nota',
-                icon: const Icon(Icons.edit_outlined, size: 20),
-                onPressed: widget.vault.isWriting ? null : () => _edit(id),),
+              tooltip: 'Editar nota',
+              icon: const Icon(Icons.edit_outlined, size: 20),
+              onPressed: widget.vault.isWriting ? null : () => _edit(id),
+            ),
             IconButton(
-                tooltip: 'Eliminar nota',
-                icon: const Icon(Icons.delete_outline, size: 20),
-                onPressed: widget.vault.isWriting
-                    ? null
-                    : () async {
-                        await widget.vault.remove(widget.accountId, id);
-                      },),
+              tooltip: 'Eliminar nota',
+              icon: const Icon(Icons.delete_outline, size: 20),
+              onPressed: widget.vault.isWriting
+                  ? null
+                  : () async {
+                      await widget.vault.remove(widget.accountId, id);
+                    },
+            ),
           ],
         ),
       ),

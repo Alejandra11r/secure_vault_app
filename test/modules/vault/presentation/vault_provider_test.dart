@@ -10,7 +10,7 @@ import 'package:secure_vault_app/modules/vault/domain/usecases/get_notes_use_cas
 import 'package:secure_vault_app/modules/vault/presentation/provider/vault_provider.dart';
 
 void main() {
-  test('adds, decrypts and removes an account-owned note', () async {
+  test('crea, descifra y elimina una nota de la cuenta activa', () async {
     final database = VaultDatabase.forTesting(NativeDatabase.memory());
     final repository = VaultRepositoryImpl(
       VaultLocalDataSource(database, EncryptionService()),

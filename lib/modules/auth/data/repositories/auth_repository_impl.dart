@@ -25,7 +25,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> logout() async {
-    // Logout is intentionally memory-only; persisted vault data stays intact.
+    
   }
 
   @override

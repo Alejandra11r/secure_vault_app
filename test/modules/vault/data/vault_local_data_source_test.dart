@@ -6,7 +6,7 @@ import 'package:secure_vault_app/modules/vault/data/database/vault_database.dart
 import 'package:secure_vault_app/modules/vault/data/datasources/vault_local_data_source.dart';
 
 void main() {
-  group('Drift VaultLocalDataSource', () {
+  group('Fuente local de bóveda Drift', () {
     late VaultDatabase database;
     late VaultLocalDataSource source;
     final key = List<int>.generate(32, (index) => index);
@@ -17,7 +17,7 @@ void main() {
     });
     tearDown(() => database.close());
 
-    test('persists encrypted notes and isolates account rows', () async {
+    test('guarda notas cifradas y aísla los registros por cuenta', () async {
       await source.saveNote(
           accountId: 'account-1',
           id: 'note-1',
@@ -33,7 +33,7 @@ void main() {
       expect(await source.getNotes('account-2'), isEmpty);
     });
 
-    test('persists encrypted categories, notes and file bytes per account',
+    test('guarda categorías, notas y archivos cifrados por cuenta',
         () async {
       await source.saveCategory(
           accountId: 'a', id: 'c', name: 'Privado', vaultKey: key,);
@@ -64,7 +64,7 @@ void main() {
       expect(await source.getFiles('b'), isEmpty);
     });
 
-    test('rejects oversized notes and enforces nonce usage budget', () async {
+    test('rechaza notas demasiado grandes y respeta el límite de nonces', () async {
       await expectLater(
           source.saveNote(
               accountId: 'a',
@@ -85,7 +85,7 @@ void main() {
           throwsA(isA<StateError>()),);
     });
 
-    test('deletes only the selected account data', () async {
+    test('elimina únicamente los datos de la cuenta indicada', () async {
       await source.saveNote(
           accountId: 'a', id: 'one', plainText: 'A', vaultKey: key,);
       await source.saveNote(
@@ -95,7 +95,7 @@ void main() {
       expect(await source.getNotes('b'), hasLength(1));
     });
 
-    test('deleting a category preserves its notes and files unassigned',
+    test('al eliminar una categoría conserva notas y archivos sin asignación',
         () async {
       await source.saveCategory(
           accountId: 'a', id: 'category', name: 'Work', vaultKey: key,);

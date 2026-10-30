@@ -5,8 +5,6 @@ import 'package:uuid/uuid.dart';
 
 import '../../../../core/security/encryption_service.dart';
 
-/// Stores only local account metadata and an authenticated, encrypted key
-/// envelope. Legacy `note_*` entries are deliberately never read or deleted.
 class AuthLocalDataSource {
   AuthLocalDataSource(this._secureStorage);
 
@@ -75,8 +73,6 @@ class AuthLocalDataSource {
   Future<void> deleteAccount(String accountId) async {
     final ids = await accountIds();
     if (!ids.contains(accountId)) return;
-    // Historical encrypted note records are retained. New Drift data is
-    // removed explicitly by the repository before the account record.
     await _secureStorage.write(
       key: _indexKey,
       value: jsonEncode(ids.where((id) => id != accountId).toList()),

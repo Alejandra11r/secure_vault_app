@@ -11,7 +11,7 @@ import 'package:secure_vault_app/modules/auth/presentation/provider/auth_provide
 import '../../../mocks/fake_secure_storage.dart';
 
 void main() {
-  group('AuthProvider', () {
+  group('Proveedor de autenticación', () {
     late AuthProvider provider;
 
     setUp(() async {
@@ -29,7 +29,7 @@ void main() {
       await provider.initialize();
     });
 
-    test('registration unlocks, lock clears key, and login restores access',
+    test('el registro abre la bóveda, el bloqueo limpia la clave y el acceso la restaura',
         () async {
       await provider.register('user@example.com', 'a strong password 123');
       final originalKey = provider.vaultKey!;
@@ -46,7 +46,7 @@ void main() {
       expect(provider.vaultKey, isNotNull);
     });
 
-    test('logout locks but preserves registered account', () async {
+    test('cerrar sesión bloquea la bóveda y conserva la cuenta', () async {
       await provider.register('user@example.com', 'a strong password 123');
       await provider.logout();
 

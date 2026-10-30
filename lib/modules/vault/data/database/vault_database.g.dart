@@ -2,7 +2,6 @@
 
 part of 'vault_database.dart';
 
-// ignore_for_file: type=lint
 class $VaultNotesTable extends VaultNotes
     with TableInfo<$VaultNotesTable, VaultNote> {
   @override

@@ -249,6 +249,7 @@ class _VaultPageState extends State<VaultPage> {
                                 categoryId: _categoryId,
                               );
                               _ctrl.clear();
+                              FocusManager.instance.primaryFocus?.unfocus();
                               if (mounted) setState(() {});
                             } catch (_) {
                               if (mounted) {
@@ -314,31 +315,52 @@ class _VaultPageState extends State<VaultPage> {
       bottomNavigationBar: user == null || key == null
           ? null
           : NavigationBar(
+              labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
               selectedIndex: _selectedTab,
               onDestinationSelected: (index) =>
                   setState(() => _selectedTab = index),
-              destinations: const [
-                NavigationDestination(
+              destinations: [
+                const NavigationDestination(
                   icon: Icon(Icons.grid_view_outlined),
                   selectedIcon: Icon(Icons.grid_view_rounded),
                   label: 'Inicio',
                 ),
                 NavigationDestination(
-                  icon: Icon(Icons.sticky_note_2_outlined),
-                  selectedIcon: Icon(Icons.sticky_note_2_rounded),
+                  icon: Semantics(
+                    container: true,
+                    identifier: 'vault_notes_tab',
+                    label: 'Notas',
+                    button: true,
+                    selected: _selectedTab == 1,
+                    onTap: () => setState(() => _selectedTab = 1),
+                    child: const ExcludeSemantics(
+                      child: Icon(Icons.sticky_note_2_outlined),
+                    ),
+                  ),
+                  selectedIcon: Semantics(
+                    container: true,
+                    identifier: 'vault_notes_tab',
+                    label: 'Notas',
+                    button: true,
+                    selected: _selectedTab == 1,
+                    onTap: () => setState(() => _selectedTab = 1),
+                    child: const ExcludeSemantics(
+                      child: Icon(Icons.sticky_note_2_rounded),
+                    ),
+                  ),
                   label: 'Notas',
                 ),
-                NavigationDestination(
+                const NavigationDestination(
                   icon: Icon(Icons.folder_outlined),
                   selectedIcon: Icon(Icons.folder_rounded),
                   label: 'Categorías',
                 ),
-                NavigationDestination(
+                const NavigationDestination(
                   icon: Icon(Icons.insert_drive_file_outlined),
                   selectedIcon: Icon(Icons.insert_drive_file_rounded),
                   label: 'Archivos',
                 ),
-                NavigationDestination(
+                const NavigationDestination(
                   icon: Icon(Icons.person_outline),
                   selectedIcon: Icon(Icons.person),
                   label: 'Perfil',

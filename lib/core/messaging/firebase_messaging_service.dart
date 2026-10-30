@@ -49,8 +49,6 @@ class FirebaseMessagingService {
       }
       _configured = true;
     } catch (_) {
-      // The app's local vault remains usable if FCM, permission UI, or the
-      // platform service is unavailable.
     }
   }
 
@@ -92,7 +90,7 @@ class FirebaseMessagingService {
     if (raw is! String) return;
     final uri = Uri.tryParse(raw);
     final route = uri?.path.isNotEmpty == true ? uri!.path : raw;
-    // Only known in-app destinations are accepted from external messages.
+
     if (route == '/info' || route == 'info') onNavigate?.call('/info');
     if (route == '/vault' || route == 'vault') onNavigate?.call('/vault');
   }
@@ -106,7 +104,7 @@ class FirebaseMessagingService {
         );
       }
     } catch (_) {
-      // Messaging is optional; no background work is required by the vault.
+      // La mensajería es opcional; la bóveda no requiere tareas en segundo plano.
     }
   }
 }

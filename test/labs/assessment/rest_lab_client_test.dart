@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:secure_vault_app/labs/assessment/rest_lab_client.dart';
 
 void main() {
-  test('REST lab parses an HTTP JSON list', () async {
+  test('El laboratorio REST interpreta una lista JSON recibida por HTTP', () async {
     final client = RestLabClient(
       baseUri: Uri.parse('https://example.test/api/'),
       client: MockClient((request) async {
@@ -18,7 +18,7 @@ void main() {
     client.close();
   });
 
-  test('REST lab rejects non-success responses and invalid URI schemes',
+  test('El laboratorio REST rechaza respuestas fallidas y esquemas URI inválidos',
       () async {
     final client = RestLabClient(
       baseUri: Uri.parse('https://example.test/'),

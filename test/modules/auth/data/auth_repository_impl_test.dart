@@ -7,7 +7,7 @@ import 'package:secure_vault_app/modules/auth/data/repositories/auth_repository_
 import '../../../mocks/fake_secure_storage.dart';
 
 void main() {
-  group('AuthRepositoryImpl', () {
+  group('Repositorio de autenticación', () {
     late FakeSecureStorage storage;
     late AuthRepositoryImpl repository;
 
@@ -19,7 +19,7 @@ void main() {
       );
     });
 
-    test('registers locally and validates the password on login', () async {
+    test('registra localmente y valida la contraseña al iniciar sesión', () async {
       final registered = await repository.register(
         ' User@Example.com ',
         'a strong password 123',
@@ -36,7 +36,7 @@ void main() {
       expect(storage.readAll(), completion(isNotEmpty));
     });
 
-    test('rejects duplicate normalized emails and incorrect passwords',
+    test('rechaza correos normalizados duplicados y contraseñas incorrectas',
         () async {
       await repository.register('A@Example.com', 'a strong password 123');
 
@@ -54,7 +54,7 @@ void main() {
       );
     });
 
-    test('logout preserves account and legacy note records', () async {
+    test('cerrar sesión conserva la cuenta y las notas heredadas', () async {
       await storage.write(key: 'note_0', value: 'legacy payload');
       await repository.register('user@example.com', 'a strong password 123');
       await repository.logout();
@@ -63,7 +63,7 @@ void main() {
       expect(await repository.registeredEmails(), ['user@example.com']);
     });
 
-    test('deletion preserves legacy and pre-Drift encrypted note records',
+    test('eliminar la cuenta conserva las notas cifradas heredadas',
         () async {
       final session = await repository.register(
         'user@example.com',

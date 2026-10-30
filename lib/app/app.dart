@@ -8,7 +8,7 @@ import 'app_environment.dart';
 import 'di/injector.dart';
 import 'routes/app_routes.dart';
 import 'theme/vault_theme.dart';
-import 'widgets/vault_ui.dart';
+import 'widgets/vault_backdrop.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
