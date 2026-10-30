@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'app_environment.dart';
 import 'di/injector.dart';
 import '../modules/auth/presentation/provider/auth_provider.dart';
 import '../modules/vault/presentation/provider/vault_provider.dart';
@@ -16,7 +17,9 @@ class App extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => getIt<VaultProvider>()),
       ],
       child: MaterialApp.router(
-        title: 'Secure Vault App',
+        title: AppBuildConfig.isProduction
+            ? 'Secure Vault'
+            : 'Secure Vault (${AppBuildConfig.environment.name})',
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),

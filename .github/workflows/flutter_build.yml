@@ -1,75 +1,88 @@
-name: Flutter Build & Release
+name: Flutter CI
 
 on:
+  pull_request:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  build:
-    name: Build APK and Run Tests
+  quality:
+    name: Analyze and test
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      # NUEVO: Configurar Java
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Verify Java
+        run: java -version
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: "3.35.6"
+          channel: stable
+          cache: true
 
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Run Flutter Tests
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Run unit and widget tests
         run: flutter test --coverage
 
-      - name: Check coverage file
-        run: ls -la coverage/
-      
-      - name: Run dart_code_metrics
-        run: dart run dart_code_metrics:metrics analyze lib --fatal-style
-          --fatal-performance --fatal-warnings
-
-      # - name: SonarCloud Scan
-      #   uses: sonarsource/sonarcloud-github-action@v2
-      #   with:
-      #     args: -X
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-      - name: Build Release APK
-        run: flutter build apk --release
-
-      - name: Upload APK artifact
+      - name: Upload coverage
         uses: actions/upload-artifact@v4
         with:
-          name: app-release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: flutter-coverage
+          path: coverage/lcov.info
 
-  release:
-    name: Create GitHub Release & Upload APK
+  android-flavors:
+    needs: quality
+    name: Build ${{ matrix.environment }} / ${{ matrix.distribution }}
     runs-on: ubuntu-latest
-    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [development, staging, production]
+        distribution: [internal, store]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Download APK artifact
-        uses: actions/download-artifact@v4
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
         with:
-          name: app-release-apk
-          path: .
+          flutter-version: "3.35.6"
+          channel: stable
+          cache: true
 
-      - name: Create GitHub Release
-        uses: ncipollo/release-action@v1
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build flavor smoke APK
+        run: >-
+          flutter build apk --debug
+          --flavor "${{ matrix.environment }}${{ matrix.distribution == 'internal' && 'Internal' || 'Store' }}"
+          --dart-define=APP_ENV=${{ matrix.environment }}
+          --dart-define=APP_DISTRIBUTION=${{ matrix.distribution }}
+
+      - name: Upload flavor APK
+        uses: actions/upload-artifact@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          artifacts: app-release-apk/app-release.apk
-          tag: v${{ github.run_number }}
-          name: Release ${{ github.run_number }}
+          name: android-${{ matrix.environment }}-${{ matrix.distribution }}
+          path: build/app/outputs/flutter-apk/*.apk
+          if-no-files-found: error

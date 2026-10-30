@@ -45,33 +45,39 @@ class _VaultPageState extends State<VaultPage> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Text(widget.user),
-            TextField(
-              key: const Key('vault_field'),
-              controller: _ctrl,
-              decoration: const InputDecoration(labelText: 'Nueva nota'),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 720),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(widget.user),
+                  TextField(
+                    key: const Key('vault_field'),
+                    controller: _ctrl,
+                    decoration: const InputDecoration(labelText: 'Nueva nota'),
+                  ),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    key: const Key('save_button'),
+                    onPressed: () async {
+                      if (_ctrl.text.trim().isEmpty) return;
+                      await vault.addNew(_ctrl.text.trim());
+                      _ctrl.clear();
+                    },
+                    child: const Text('Guardar'),
+                  ),
+                  const SizedBox(height: 20),
+                  ListNotesWidget(vault: vault),
+                ],
+              ),
             ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              key: const Key('save_button'),
-              onPressed: () async {
-                if (_ctrl.text.trim().isEmpty) return;
-                await vault.addNew(_ctrl.text.trim());
-                _ctrl.clear();
-              },
-              child: const Text('Guardar'),
-            ),
-            const SizedBox(height: 20),
-            ListNotesWidget(vault: vault),
-          ],
+          ),
         ),
       ),
     );
   }
 }
-
-

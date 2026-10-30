@@ -1,0 +1,77 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Flutter: developmentInternal",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": [
+        "--flavor",
+        "developmentInternal",
+        "--dart-define=APP_ENV=development",
+        "--dart-define=APP_DISTRIBUTION=internal"
+      ]
+    },
+    {
+      "name": "Flutter: developmentStore",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": [
+        "--flavor",
+        "developmentStore",
+        "--dart-define=APP_ENV=development",
+        "--dart-define=APP_DISTRIBUTION=store"
+      ]
+    },
+    {
+      "name": "Flutter: stagingInternal",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": [
+        "--flavor",
+        "stagingInternal",
+        "--dart-define=APP_ENV=staging",
+        "--dart-define=APP_DISTRIBUTION=internal"
+      ]
+    },
+    {
+      "name": "Flutter: stagingStore",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": [
+        "--flavor",
+        "stagingStore",
+        "--dart-define=APP_ENV=staging",
+        "--dart-define=APP_DISTRIBUTION=store"
+      ]
+    },
+    {
+      "name": "Flutter: productionInternal",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": [
+        "--flavor",
+        "productionInternal",
+        "--dart-define=APP_ENV=production",
+        "--dart-define=APP_DISTRIBUTION=internal"
+      ]
+    },
+    {
+      "name": "Flutter: productionStore",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": [
+        "--flavor",
+        "productionStore",
+        "--dart-define=APP_ENV=production",
+        "--dart-define=APP_DISTRIBUTION=store"
+      ]
+    }
+  ]
+}

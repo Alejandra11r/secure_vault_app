@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:secure_vault_app/modules/auth/presentation/widgets/login_button_widget.dart';
+import 'package:secure_vault_app/modules/data/data_repository.dart';
 import '../../presentation/provider/auth_provider.dart';
 
 class LoginPage extends StatefulWidget {
@@ -14,6 +15,27 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
+  final repository = DataRepository();
+
+  @override
+  void initState() {
+    super.initState();
+    repository.init();
+  }
+
+  Future<void> cargarDatos() async {
+    final json = '[ "hola", "mundo", "flutter" ]';
+
+    final result = await repository.getProcessedData(json);
+
+    debugPrint(result.toString()); // ["HOLA", "MUNDO", "FLUTTER"]
+  }
+
+  @override
+  void dispose() {
+    repository.dispose();
+    super.dispose();
+  }
 
   bool _loading = false;
   Future<void> _onPressedContinue({
@@ -46,41 +68,52 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    // cargarDatos();
     final AuthProvider auth = Provider.of<AuthProvider>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Login')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              key: const Key('email_field'),
-              controller: _emailCtrl,
-              decoration: const InputDecoration(labelText: 'Email'),
-            ),
-            TextField(
-              key: const Key('password_field'),
-              controller: _passCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Password',
-              ),
-              obscureText: true,
-            ),
-            const SizedBox(height: 20),
-            _loading
-                ? const CircularProgressIndicator()
-                : LoginButtonWidget(
-                    onPressed: () => _onPressedContinue(
-                      auth: auth,
-                      context: context,
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) => SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 480),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    TextField(
+                      key: const Key('email_field'),
+                      controller: _emailCtrl,
+                      decoration: const InputDecoration(labelText: 'Email'),
                     ),
-                  ),
-            if (widget.data != null)
-              Text(
-                ' id: ${widget.data?['id']}, name: ${widget.data?['name']}, role: ${widget.data?['role']}',
+                    TextField(
+                      key: const Key('password_field'),
+                      controller: _passCtrl,
+                      decoration: const InputDecoration(
+                        labelText: 'Password',
+                      ),
+                      obscureText: true,
+                    ),
+                    const SizedBox(height: 20),
+                    _loading
+                        ? const CircularProgressIndicator()
+                        : LoginButtonWidget(
+                            onPressed: () => _onPressedContinue(
+                              auth: auth,
+                              context: context,
+                            ),
+                          ),
+                    if (widget.data != null)
+                      Text(
+                        ' id: ${widget.data?['id']}, name: ${widget.data?['name']}, role: ${widget.data?['role']}',
+                      ),
+                  ],
+                ),
               ),
-          ],
+            ),
+          ),
         ),
       ),
     );
